@@ -3,6 +3,10 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
+// Code is super messy, i will clean it up at some point when i have time.
+// I only made this to test a DLL that im working on for Assetto Corsa so it looks awful.
+// Dont use it for games like COD etc, you'll get banned.
+
 namespace CodeLoom___Example_DLL_Injector
 {
     public partial class Form1 : Form
@@ -27,18 +31,16 @@ namespace CodeLoom___Example_DLL_Injector
             string processName = processList.SelectedItem.ToString();
             string dllpath = dllPathTEST.Text;
 
-            //Check to make sure that the soft cunt has selected a process && DLL...
             if (string.IsNullOrEmpty(processName) || string.IsNullOrEmpty(dllpath))
             {
-                MessageBox.Show("silly cunt");
+                MessageBox.Show("No information at all?");
                 return;
             }
 
-            //Double check that the process that they have selected is real and not some dud shit.
             Process[] processes = Process.GetProcessesByName(processName);
             if (processes.Length == 0)
             {
-                MessageBox.Show("silly cunt 2");
+                MessageBox.Show("Process name empty...");
                 return;
             }
 
@@ -65,15 +67,12 @@ namespace CodeLoom___Example_DLL_Injector
                 IntPtr hThread = IntPtr.Zero;
                 try
                 {
-                    // Allocate memory in the target process for the DLL path
                     pDllPath = Marshal.StringToHGlobalAnsi(dllpath);
                     IntPtr pLoadLibrary = GetProcAddress(GetModuleHandle("kernel32.dll"), "LoadLibraryA");
 
-                    // Constants for error codes (you can define these or use their actual values)
                     const int ERROR_ACCESS_DENIED = 5;
                     const int ERROR_FILE_NOT_FOUND = 2;
 
-                    // Create a remote thread in the target process to load the DLL
                     hThread = CreateRemoteThread(hProcess, IntPtr.Zero, 0, pLoadLibrary, pDllPath, 0, IntPtr.Zero);
                     if (hThread == IntPtr.Zero)
                     {
@@ -83,14 +82,14 @@ namespace CodeLoom___Example_DLL_Injector
                         switch (errorCode)
                         {
                             case ERROR_ACCESS_DENIED:
-                                errorMessage += "Permissions are too low you sillt cunt";
+                                errorMessage += "This application required eleveated permissions.";
                                 break;
                             case ERROR_FILE_NOT_FOUND:
-                                errorMessage += " Process has fucked off.";
+                                errorMessage += "That taget process can no longer be found.";
                                 break;
 
                             default:
-                                errorMessage += "Not a fucking scoobys mate";
+                                errorMessage += "Unknown error occured.";
                                 break;
                         }
 
@@ -98,13 +97,10 @@ namespace CodeLoom___Example_DLL_Injector
                         return;
                     }
 
-
-                    // Wait for the remote thread to finish
                     WaitForSingleObject(hThread, 0xFFFFFFFF);
                 }
                 finally
                 {
-                    // Cleanup
                     CloseHandle(hThread);
                     Marshal.FreeHGlobal(pDllPath);
                     CloseHandle(hProcess);
@@ -114,7 +110,7 @@ namespace CodeLoom___Example_DLL_Injector
             }
         }
 
-        //Import shit
+        //Import everything that we need at the bottom here.
         [DllImport("kernel32.dll")]
         static extern IntPtr OpenProcess(uint dwDesiredAccess, bool bInheritHandle, int dwProcessId);
 
@@ -137,6 +133,7 @@ namespace CodeLoom___Example_DLL_Injector
 
         const uint PROCESS_ALL_ACCESS = 0x1F0FFF;
 
+        //I'll do something with this later and remove it...
         private void Form1_Load(object sender, EventArgs e)
         {
 
