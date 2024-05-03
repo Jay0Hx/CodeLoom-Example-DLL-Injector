@@ -138,5 +138,24 @@ namespace CodeLoom___Example_DLL_Injector
         {
 
         }
+
+        private void dllSelector_Click(object sender, EventArgs e)
+        {
+            // Create a new instance of OpenFileDialog
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+
+            // Set the filter to only show DLL files
+            openFileDialog.Filter = "DLL Files (*.dll)|*.dll";
+
+            // Show the dialog and check if the user clicked OK
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                // Get the selected file path
+                string selectedFilePath = openFileDialog.FileName;
+
+                // Update the text of dllPathTEST with the selected file path
+                dllPathTEST.Text = selectedFilePath;
+            }
+        }
     }
 }
